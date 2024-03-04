@@ -1,4 +1,15 @@
 import tkinter as tk
+import keyboard
+import sys
+
+#the end key is the killswitch, as once we start adding infinite loops and traps there won't be a way to stop it
+def on_end_pressed(e):
+    if e.name == 'end':
+        root.destroy()
+        sys.exit()
+
+
+#These are the additional windows that will be created
 def create_additional_windows():
     window1 = tk.Toplevel(root)
     label1 = tk.Label(window1, text='FLASHBANG')
@@ -12,6 +23,12 @@ def create_additional_windows():
     window2.protocol("WM_DELETE_WINDOW", on_close_main_window)
     window2.geometry('1600x900')
 
+#create a trap button that when clicked, triples the windows being opened
+#make sure the trap button window appears on top level
+#or make the user work to find it, idk
+
+
+#when user closes the main window, spawn additional windows
 def on_close_main_window():
     create_additional_windows()
 
@@ -21,10 +38,31 @@ root = tk.Tk()
 root.title("DingoHydra")
 root.geometry('500x300')
 
+
 label_main = tk.Label(root, text="Strike me down and I will become more powerful'")
 label_main.pack()
+
 
 # Bind the close event of the main window
 root.protocol("WM_DELETE_WINDOW", on_close_main_window)
 
-root.mainloop()
+#idk if this is even the right place for this particular line of code, but it works here so here it stays
+keyboard.on_press_key('end', on_end_pressed)
+
+#The program will try the mainloop, which will be successful obviously as there is nothing stopping it
+#however, once the interrupt has been triggered, then it'll stop the program.
+#it may just be the 3AM talking but I don't actually remember coding this end part so idk if it is needed
+#whatever we will just call it code obfuscation for now.
+
+try:
+    root.mainloop()
+except KeyboardInterrupt:
+    pass
+finally:
+    keyboard.unhook_all()
+
+
+
+
+
+
