@@ -1,12 +1,16 @@
 import tkinter as tk
 import keyboard
 import sys
+from tkinter import messagebox
+import random
 
 #the end key is the killswitch, as once we start adding infinite loops and traps there won't be a way to stop it
 def on_end_pressed(e):
     if e.name == 'end':
         root.destroy()
         sys.exit()
+
+
 
 
 #These are the additional windows that will be created
@@ -23,22 +27,47 @@ def create_additional_windows():
     window2.protocol("WM_DELETE_WINDOW", on_close_main_window)
     window2.geometry('1600x900')
 
-#create a trap button that when clicked, triples the windows being opened
-#make sure the trap button window appears on top level
-#or make the user work to find it, idk
+# because python, and computers in general really hate infinite loops with any sort of oomph to them
+#by using a counter it's not technically infinite, but we can place the counter number high enough
+#that it will still have the intended effect.
+
+#creating the pop up window for the nuke, including information like size and position of the window
+#We use random.randint to ensure the popup will appear *somewhere* on the screen*
+
+def create_nuke_popup(counter):
+    if counter > 0:
+
+        popup = tk.Toplevel(root)
+        popup.title('It is over')
+
+        screen_width = root.winfo_screenwidth()
+        screen_height = root.winfo_screenheight()
+
+        x_position = random.randint(0, screen_width - 291)  #window sizes
+        y_position = random.randint(0, screen_height - 358)
+
+        popup.geometry(f'200x100+{x_position}+{y_position}')
+        root.after(5, create_nuke_popup, counter -1) #adjust speed with first int in milliseconds
+
+# this is our trigger, if the user clicks yes then the nuke happens, if user clicks no then it gets rid
+# of the nuke popup, of course they still have to deal with the other part of the hydra
+# and the nuke window will spawn again as per on_close_main_window()
+def create_nuke():
+    global answer
+    answer = messagebox.askyesno('End it all?', 'Do you want to end it all?')
+    if answer:
+        create_nuke_popup(900) #I chose 900 here, but you could choose whatever number
 
 
-#when user closes the main window, spawn additional windows
+#when user closes the main window, spawn additional windows as well as spawn the nuke
 def on_close_main_window():
     create_additional_windows()
-
+    create_nuke()
 
 # Main Window
 root = tk.Tk()
 root.title("DingoHydra")
 root.geometry('500x300')
-
-
 label_main = tk.Label(root, text="Strike me down and I will become more powerful'")
 label_main.pack()
 
@@ -46,12 +75,13 @@ label_main.pack()
 # Bind the close event of the main window
 root.protocol("WM_DELETE_WINDOW", on_close_main_window)
 
-#idk if this is even the right place for this particular line of code, but it works here so here it stays
+
+#IDK if this is even the right place for this particular line of code, but it works here so here it stays
 keyboard.on_press_key('end', on_end_pressed)
 
 #The program will try the mainloop, which will be successful obviously as there is nothing stopping it
 #however, once the interrupt has been triggered, then it'll stop the program.
-#it may just be the 3AM talking but I don't actually remember coding this end part so idk if it is needed
+#it may just be the 3AM talking, but I don't actually remember coding this end part so IDK if it is needed
 #whatever we will just call it code obfuscation for now.
 
 try:
